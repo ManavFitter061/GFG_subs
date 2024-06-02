@@ -8,33 +8,34 @@ using namespace std;
 
 class Solution{
   public:
+  
     int minJumps(int arr[], int n){
         // Your code here
-        if(n==1){
-            return 0;
-        }
-        if(arr[0]==0){
-            return -1;
-        }
-        int maxrange=0;
-        int maxi=0;
-        int jumps=0;
+       
+        if(n==1)return 0;
+        if(arr[0]<1)return -1;
+        if(arr[0]>=n-1)return 1;
         
-        for(int i=0;i<n;i++){
-            maxi=max(maxi,i+arr[i]);
-            if(maxrange==i){
-                maxrange=maxi;
-                jumps++;
+        int count=0;
+        int i=0;
+        while(i<n-1)
+        {
+            int index=0;
+            int maxi=INT_MIN;
+            for(int j=i+1;j<=i+arr[i];j++)
+            {
+                if(maxi<j+arr[j])
+                {
+                    maxi=j+arr[j];
+                    index=j;
+                }
             }
-            if(maxrange>=n-1){
-                return jumps;
-            }
-            
-            
-            
+            if(arr[index]==0) return -1;
+            if(maxi>=n-1) return (count+=2);
+            i=index;
+            count++;
         }
-        return -1;
-        
+        return count;
     }
 };
 
