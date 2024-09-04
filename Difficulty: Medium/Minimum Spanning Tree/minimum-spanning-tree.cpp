@@ -3,6 +3,49 @@
 using namespace std;
 
 // } Driver Code Ends
+
+class DisjointSet{
+    vector<int> rank,size,parent;
+    public:
+    DisjointSet(int n){
+        rank.resize(n+1,0);
+        parent.resize(n+1);
+        size.resize(n+1);
+        for(int i=0;i<=n;i++){
+            parent[i]=i;
+            size[i]=1;
+        }
+    }
+    void unionBySize(int u,int v){
+        int ulp_u=findUpar(u);
+        int ulp_v=findUpar(v);
+        
+        if(ulp_v==ulp_u){
+            return;
+        }
+        if(size[ulp_u]<size[ulp_v]){
+            parent[ulp_u]=ulp_v;
+            size[ulp_v]+=size[ulp_u];
+            return;
+        }
+        else{
+            parent[ulp_v]=parent[ulp_u];
+            size[ulp_u]+=size[ulp_v];
+            return;
+        }
+    }
+    
+    int findUpar(int n){
+        if(n==parent[n]){
+            return n;
+        }
+        
+        return parent[n]=findUpar(parent[n]);
+    }
+    
+};
+
+
 class Solution
 {
 	public:
@@ -10,35 +53,85 @@ class Solution
     int spanningTree(int V, vector<vector<int>> adj[])
     {
         // code here
-        vector<int>vis(V,0);
-        // vector<int>dis(V,0);
+        //PRIM ALGO
+        // vector<int>vis(V,0);
         
-        priority_queue <pair<int,int>,vector<pair<int,int>>,greater<pair<int,int>>> pq;
-        pq.push({0,0});
         
-        int ans=0;
+        // priority_queue <pair<int,int>,vector<pair<int,int>>,greater<pair<int,int>>> pq;
+        // pq.push({0,0});
         
-        while(!pq.empty()){
-            int node=pq.top().second;
-            int dis=pq.top().first;
-            pq.pop();
+        // int ans=0;
+        
+        // while(!pq.empty()){
+        //     int node=pq.top().second;
+        //     int dis=pq.top().first;
+        //     pq.pop();
             
             
-            if(vis[node]) continue;
-            if(!vis[node]){
-                vis[node]=1;
-                ans+=dis;
-            }
+        //     if(vis[node]) continue;
+        //     if(!vis[node]){
+        //         vis[node]=1;
+        //         ans+=dis;
+        //     }
             
-            for(auto it: adj[node]){
-                int newnode=it[0];
-                int newdis=it[1];
-                if(!vis[newnode]){
-                    pq.push({newdis,newnode});
-                }
+        //     for(auto it: adj[node]){
+        //         int newnode=it[0];
+        //         int newdis=it[1];
+        //         if(!vis[newnode]){
+        //             pq.push({newdis,newnode});
+        //         }
+        //     }
+        // }
+        // return ans;
+        
+        
+        //KRUSKAL ALGO
+        
+        vector<pair<int,pair<int,int>>> edges;
+        
+        for(int i=0;i<V;i++){
+            for(auto it: adj[i]){
+                int adjnode=it[0];
+                int wt=it[1];
+                int node=i;
+                edges.push_back({wt,{node,adjnode}});
+                
+                
+                
             }
         }
-        return ans;
+        
+        DisjointSet ds(V);
+        sort(edges.begin(),edges.end());
+        
+        int mst=0;
+        
+        for(auto it: edges){
+            int w=it.first;
+            int n1=it.second.first;
+            int n2=it.second.second;
+            // cout<<w<<"-"<<n1<<"-"<<n2<<endl;
+            
+            if(ds.findUpar(n1)!=ds.findUpar(n2)){
+                mst+=w;
+                // cout<<mst<<"-"<<w<<endl;
+                ds.unionBySize(n1,n2);
+            }
+            
+        }
+        
+        return mst;
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
     }
 };
 
